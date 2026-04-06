@@ -1,7 +1,7 @@
 import { useAuth, useClerk, useUser } from "@clerk/expo";
 import { styled } from "nativewind";
-import React from "react";
-import { Pressable, Text, View } from "react-native";
+import React, { useState } from "react";
+import { Alert, Pressable, Text, View } from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 
 const SafeAreaView = styled(RNSafeAreaView);
@@ -10,10 +10,21 @@ export default function Settings() {
   const { signOut } = useClerk();
   const { user } = useUser();
   const { isLoaded } = useAuth();
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
-  if (!isLoaded) {
-    return null;
-  }
+  const handleSignOut = async () => {
+    if (isSigningOut) return;
+
+    setIsSigningOut(true);
+    try {
+      await signOut();
+    } catch (error) {
+      console.error("Error signing out:", error);
+      Alert.alert("Error", "Failed to sign out. Please try again.");
+    } finally {
+      setIsSigningOut(false);
+    }
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-background p-5">
@@ -61,10 +72,11 @@ export default function Settings() {
               opacity: pressed ? 0.8 : 1,
             },
           ]}
-          onPress={() => signOut()}
+          onPress={handleSignOut}
+          disabled={isSigningOut}
         >
           <Text className="font-sans-semibold text-base text-white">
-            Sign out
+            {isSigningOut ? "Signing out..." : "Sign out"}
           </Text>
         </Pressable>
       </View>

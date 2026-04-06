@@ -126,7 +126,13 @@ export default function SignInPage() {
     }
 
     setLocalErrors({});
-    await signIn.mfa.verifyEmailCode({ code: code.trim() });
+    try {
+      await signIn.mfa.verifyEmailCode({ code: code.trim() });
+    } catch (error) {
+      console.error("Error verifying email code:", error);
+      setLocalErrors({ code: "Failed to verify code. Please try again." });
+      return;
+    }
 
     if (signIn.status === "complete") {
       await finalizeSignIn();
@@ -306,7 +312,7 @@ export default function SignInPage() {
 
                   <View className="mt-4 flex-row justify-center gap-2">
                     <Text className="text-sm text-muted-foreground">
-                      New to Recurly?
+                      New to Recurrly?
                     </Text>
                     <Link href="/sign-up" asChild>
                       <Text className="text-sm font-sans-semibold text-accent">
