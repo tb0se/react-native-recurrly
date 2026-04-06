@@ -1,7 +1,7 @@
 import {
-    formatCurrency,
-    formatStatusLabel,
-    formatSubscriptionDateTime,
+  formatCurrency,
+  formatStatusLabel,
+  formatSubscriptionDateTime,
 } from "@/lib/utils";
 import clsx from "clsx";
 import React from "react";
@@ -23,6 +23,7 @@ export default function SubscriptionCard({
   startDate,
   status,
 }: SubscriptionCardProps) {
+  const fallback = "Not provided";
   return (
     <Pressable
       onPress={onPress}
@@ -61,7 +62,7 @@ export default function SubscriptionCard({
                   numberOfLines={1}
                   ellipsizeMode="tail"
                 >
-                  {paymentMethod?.trim()}
+                  {paymentMethod?.trim() ?? fallback}
                 </Text>
               </View>
             </View>
@@ -74,7 +75,7 @@ export default function SubscriptionCard({
                   numberOfLines={1}
                   ellipsizeMode="tail"
                 >
-                  {category?.trim() ?? plan?.trim()}
+                  {category?.trim() ?? plan?.trim() ?? fallback}
                 </Text>
               </View>
             </View>
