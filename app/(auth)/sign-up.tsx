@@ -1,6 +1,7 @@
 import { useAuth, useSignUp } from "@clerk/expo";
 import { Link, Redirect, useRouter, type Href } from "expo-router";
 import { styled } from "nativewind";
+import { posthog } from "@/lib/posthog";
 import React from "react";
 import {
   ActivityIndicator,
@@ -39,6 +40,13 @@ export default function SignUpPage() {
   }, [isSignedIn, isLoaded, router]);
 
   const finalizeSignUp = async () => {
+    posthog.identify(emailAddress.trim().toLowerCase(), {
+      $set: { email: emailAddress.trim().toLowerCase() },
+      $set_once: { first_signup_date: new Date().toISOString() },
+    });
+    posthog.capture("user_signed_up", {
+      email: emailAddress.trim().toLowerCase(),
+    });
     await signUp.finalize({
       navigate: ({
         session,

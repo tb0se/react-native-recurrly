@@ -1,6 +1,7 @@
 import { useAuth, useSignIn } from "@clerk/expo";
 import { Link, Redirect, useRouter, type Href } from "expo-router";
 import { styled } from "nativewind";
+import { posthog } from "@/lib/posthog";
 import React from "react";
 import {
   ActivityIndicator,
@@ -39,6 +40,12 @@ export default function SignInPage() {
   }, [isSignedIn, isLoaded, router]);
 
   const finalizeSignIn = async () => {
+    posthog.identify(emailAddress.trim().toLowerCase(), {
+      $set: { email: emailAddress.trim().toLowerCase() },
+    });
+    posthog.capture("user_signed_in", {
+      email: emailAddress.trim().toLowerCase(),
+    });
     await signIn.finalize({
       navigate: ({
         session,

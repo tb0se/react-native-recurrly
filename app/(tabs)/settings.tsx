@@ -1,5 +1,6 @@
 import { useAuth, useClerk, useUser } from "@clerk/expo";
 import { styled } from "nativewind";
+import { posthog } from "@/lib/posthog";
 import React, { useState } from "react";
 import { Alert, Pressable, Text, View } from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
@@ -17,6 +18,8 @@ export default function Settings() {
 
     setIsSigningOut(true);
     try {
+      posthog.capture("user_signed_out");
+      posthog.reset();
       await signOut();
     } catch (error) {
       console.error("Error signing out:", error);
